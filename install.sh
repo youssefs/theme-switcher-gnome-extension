@@ -18,7 +18,7 @@ conv='./convenience.js'
 ext='./extension.js'
 if [[ -d $icons &&  -e $conv && -e $ext ]]
 then
-    cp -r icons/ convenience.js extension.js -t $target_dir
+    cp -r icons/ metadata.json convenience.js extension.js -t $target_dir
     echo Copying files to $target_dir
 else
     echo Files not found
