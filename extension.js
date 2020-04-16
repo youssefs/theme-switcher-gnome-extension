@@ -58,7 +58,7 @@ class ThemeSwitcher extends PanelMenu.Button {
         this._icon = new St.Icon({
             style_class: "system-status-icon",
         });
-        this._icon.gicon = Gio.icon_new_for_string(
+        this._icon.gicon = Gio.Icon.new_for_string(
             Me.path + "/icons/" + LightIcon + ".svg"
         );
 
