@@ -28,13 +28,13 @@ const execSync = require("child_process").execSync;
 //     "gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'"
 // );
 
-const IndicatorName = "SwitchTheme";
+const IndicatorName = "ThemeSwitcher";
 const DarkIcon = "dark-gray";
 const LightIcon = "light-gray";
 // const DarkIcon = "dark-black";
 // const LightIcon = "light-black";
 
-const SwitchTheme = new Lang.Class({
+const ThemeSwitcher = new Lang.Class({
     Name: IndicatorName,
     Extends: PanelMenu.Button,
 
@@ -117,11 +117,11 @@ const SwitchTheme = new Lang.Class({
 });
 
 function enable() {
-    SwitchTheme = new SwitchTheme();
-    Main.panel.addToStatusArea(IndicatorName, SwitchTheme);
+    ThemeSwitcher = new ThemeSwitcher();
+    Main.panel.addToStatusArea(IndicatorName, ThemeSwitcher);
 }
 
 function disable() {
-    SwitchTheme.destroy();
-    SwitchTheme = null;
+    ThemeSwitcher.destroy();
+    ThemeSwitcher = null;
 }
