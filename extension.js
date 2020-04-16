@@ -34,12 +34,12 @@ const LightIcon = "light-gray";
 // const DarkIcon = "dark-black";
 // const LightIcon = "light-black";
 
-const ThemeSwitcher = new Lang.Class({
-    Name: IndicatorName,
-    Extends: PanelMenu.Button,
-
-    _init: function (metadata, params) {
-        this.parent(null, IndicatorName);
+// const ThemeSwitcher = new Lang.Class({
+//     Name: IndicatorName,
+//     Extends: PanelMenu.Button,
+class ThemeSwitcher extends PanelMenu.Button {
+    constructor() {
+        // this.parent(null, IndicatorName);
         this.actor.accessible_role = Atk.Role.TOGGLE_BUTTON;
 
         this._settings = Convenience.getSettings();
@@ -54,27 +54,12 @@ const ThemeSwitcher = new Lang.Class({
         if (!this._settings.get_boolean(SHOW_INDICATOR_KEY)) {
             this.actor.hide();
         }
-        // this._sessionManager = new DBusSessionManagerProxy(
-        //     Gio.DBus.session,
-        //     "org.gnome.SessionManager",
-        //     "/org/gnome/SessionManager"
-        // );
-
-        // this._windowCreatedId = this._display.connect_after(
-        //     "window-created",
-        //     Lang.bind(this, this._mayInhibit)
-        // );
-        // let shellwm = global.window_manager;
-        // this._windowDestroyedId = shellwm.connect(
-        //     "destroy",
-        //     Lang.bind(this, this._mayUninhibit)
-        // );
 
         this._icon = new St.Icon({
             style_class: "system-status-icon",
         });
         this._icon.gicon = Gio.icon_new_for_string(
-            Me.path + "/icons/" + LightIcon + ".png"
+            Me.path + "/icons/" + LightIcon + ".svg"
         );
 
         this._state = false; // light theme
@@ -85,9 +70,9 @@ const ThemeSwitcher = new Lang.Class({
             "button-press-event",
             Lang.bind(this, this.toggleState)
         );
-    },
+    }
 
-    toggleState: function () {
+    toggleState() {
         if (this._state) {
             // set light theme
             this._state = false;
@@ -109,12 +94,12 @@ const ThemeSwitcher = new Lang.Class({
             );
             Main.notify(_("Switched to Dark Theme"));
         }
-    },
+    }
 
-    destroy: function () {
+    destroy() {
         this.parent();
-    },
-});
+    }
+}
 
 function enable() {
     ThemeSwitcher = new ThemeSwitcher();
