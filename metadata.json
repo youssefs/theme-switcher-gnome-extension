@@ -1,7 +1,7 @@
 {
 	"uuid": "theme-switcher@youssefsaade95@gmail.com",
 	"name": "Theme Switcher",
-	"description": "This extension adds an dropdown combobox to choose between Light and Dark GTK themes.",
+	"description": "This extension adds a button to the status bar to toggle between Light and Dark GTK themes.",
 	"version": 0.1,
 	"shell-version": [
 		"3.8",
