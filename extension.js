@@ -5,8 +5,8 @@ const Main = imports.ui.main;
 const execSync = require("child_process").execSync;
 
 // const IndicatorName = "ThemeSwitcher";
-const DarkIcon = "dark-gray";
-const LightIcon = "light-gray";
+const DarkIcon = "dark-icon";
+const LightIcon = "light-icon";
 // const DarkIcon = "dark-black";
 // const LightIcon = "light-black";
 
