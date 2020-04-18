@@ -77,7 +77,10 @@ class ThemeSwitcher extends PanelMenu.Button {
             // set light theme
             this._state = false;
             execSync(
-                "gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'"
+                "gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-maia'"
+            );
+            execSync(
+                "dconf write /org/gnome/shell/extensions/user-theme/name \"'Adwaita-maia'\""
             );
             this._icon.gicon = Gio.icon_new_for_string(
                 Me.path + "/icons/" + LightIcon + ".png"
@@ -87,7 +90,10 @@ class ThemeSwitcher extends PanelMenu.Button {
             // set dark theme
             this._state = true;
             execSync(
-                "gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'"
+                "gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-maia-dark'"
+            );
+            execSync(
+                "dconf write /org/gnome/shell/extensions/user-theme/name \"'Adwaita-maia-dark'\""
             );
             this._icon.gicon = Gio.icon_new_for_string(
                 Me.path + "/icons/" + DarkIcon + ".png"
