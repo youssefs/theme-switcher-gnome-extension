@@ -2,7 +2,7 @@ const St = imports.gi.St;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Main = imports.ui.main;
 
-const execSync = require("child_process").execSync;
+import { execSync } from "child_process";
 
 // const IndicatorName = "ThemeSwitcher";
 const DarkIcon = "dark-icon";
@@ -47,6 +47,22 @@ function toggle_theme() {
     }
 }
 
+function is_day() {
+    var today = new Date();
+    time = today.getHours() + ":" + today.getMinutes();
+    var sunrise = execSync("hdate -s | grep rise | cut -f 2 -d ' '")
+        .toString("UTF-8")
+        .slice(0, 5);
+    var sunset = execSync("hdate -s | grep set | cut -f 2 -d ' '")
+        .toString("UTF-8")
+        .slice(0, 5);
+    if (sunrise < time && time < sunset) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function init() {
     button = new St.Bin({
         style_class: "panel-button",
@@ -57,33 +73,24 @@ function init() {
         track_hover: true,
     });
 
-    var today = new Date();
-    time = today.getHours() + ":" + today.getMinutes();
-    var sunrise = execSync("hdate -s | grep rise | cut -f 2 -d ' '")
-        .toString("UTF-8")
-        .slice(0, 5);
-    var sunset = execSync("hdate -s | grep set | cut -f 2 -d ' '")
-        .toString("UTF-8")
-        .slice(0, 5);
-    if (sunrise < time && time < sunset) {
-        icon = new St.Icon({ style_class: LightIcon });
+    if (is_day()) {
+        icon = new St.Icon({ style_class: "light-icon" });
     } else {
-        icon = new St.Icon({ style_class: DarkIcon });
+        icon = new St.Icon({ style_class: "dark-icon" });
     }
     button.set_child(icon);
 
     button.connect("button-press-event", function () {
         if (toggle_theme()) {
-            icon = new St.Icon({ style_class: DarkIcon });
+            icon = new St.Icon({ style_class: "dark-icon" });
         } else {
-            icon = new St.Icon({ style_class: LightIcon });
+            icon = new St.Icon({ style_class: "light-icon" });
         }
         button.set_child(icon);
     });
 }
 
 function enable() {
-    // init();
     Main.panel._rightBox.insert_child_at_index(button, 0);
 }
 
