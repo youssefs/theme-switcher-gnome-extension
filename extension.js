@@ -1,8 +1,8 @@
+import { execSync } from "child_process";
+
 const St = imports.gi.St;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Main = imports.ui.main;
-
-import { execSync } from "child_process";
 
 // const IndicatorName = "ThemeSwitcher";
 const DarkIcon = "dark-icon";
