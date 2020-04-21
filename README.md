@@ -49,4 +49,7 @@ In a terminal:
     $ rm -r theme-switcher
     ```
 
+## Limitations
+Currently this version only switches between two static variatns (normal and dark) of one theme: `Adwaita-maia`.
+In future versions, I will be adding the option to choose the base theme.
 
