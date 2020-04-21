@@ -3,7 +3,7 @@ A Gnome extension to toggle between Light and Dark themes.
 
 Light: 
 
-![alt text](media/theme-switcher.png)
+![alt text](media/theme-switcher-light.png)
 
 Dark:
 
