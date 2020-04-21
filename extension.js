@@ -43,25 +43,13 @@ const current_theme = [
 ];
 
 function cmd(cmd) {
-    let stdout = "";
-    let [res, pid, in_fd, out_fd, err_fd] = GLib.spawn_async_with_pipes(
+    let stdout = GLib.spawn_sync(
         null,
         cmd,
         null,
         GLib.SpawnFlags.SEARCH_PATH,
         null
-    );
-    let out_reader = new Gio.DataInputStream({
-        base_stream: new Gio.UnixInputStream({ fd: out_fd }),
-    });
-    while (true) {
-        let [out, size] = out_reader.read_line(null);
-        if (size > 1) {
-            stdout += out.toString() + "\n";
-        } else {
-            break;
-        }
-    }
+    )[1].toString();
     return stdout;
 }
 
@@ -88,21 +76,18 @@ function toggle_theme() {
     }
 }
 
-// function is_day() {
-//     var today = new Date();
-//     var time = today.getHours() + ":" + today.getMinutes();
-//     var sunrise = execSync("hdate -s | grep rise | cut -f 2 -d ' '")
-//         .toString("UTF-8")
-//         .slice(0, 5);
-//     var sunset = execSync("hdate -s | grep set | cut -f 2 -d ' '")
-//         .toString("UTF-8")
-//         .slice(0, 5);
-//     if (sunrise < time && time < sunset) {
-//         return true;
-//     } else {
-//         return false;
-//     }
-// }
+function is_day() {
+    var today = new Date();
+    var time = today.getHours() + ":" + today.getMinutes();
+    var _cmd = ["hdate", "-s"];
+    var sunrise = cmd(_cmd).slice(48, 53); // sunrise
+    var sunset = cmd(_cmd).slice(62, 67); // sunset
+    if (sunrise < time && time < sunset) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 function init() {
     button = new St.Bin({
@@ -114,14 +99,17 @@ function init() {
         track_hover: true,
     });
 
-    // if (is_day()) {
-    //     icon = new St.Icon({ style_class: "light-icon" });
-    // } else {
-    //     icon = new St.Icon({ style_class: "dark-icon" });
-    // }
-    set_light();
-    icon = new St.Icon({ style_class: "system-status-icon" });
-    icon.gicon = Gio.icon_new_for_string(Me.path + "/" + LightIcon);
+    if (is_day()) {
+        icon = new St.Icon({ style_class: "system-status-icon" });
+        icon.gicon = Gio.icon_new_for_string(Me.path + "/" + LightIcon);
+        set_light();
+        state = false;
+    } else {
+        icon = new St.Icon({ style_class: "system-status-icon" });
+        icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
+        set_dark();
+        state = true;
+    }
     button.set_child(icon);
 
     button.connect("button-press-event", function () {
