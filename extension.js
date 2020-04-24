@@ -80,8 +80,8 @@ function is_day() {
     var today = new Date();
     var time = today.getHours() + ":" + today.getMinutes();
     var _cmd = ["hdate", "-s"];
-    var sunrise = cmd(_cmd).slice(48, 53); // sunrise
-    var sunset = cmd(_cmd).slice(62, 67); // sunset
+    var sunrise = cmd(_cmd).slice(47, 53); // sunrise
+    var sunset = cmd(_cmd).slice(61, 67); // sunset
     if (sunrise < time && time < sunset) {
         return true;
     } else {
