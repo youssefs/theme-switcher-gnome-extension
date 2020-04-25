@@ -79,9 +79,17 @@ function toggle_theme() {
 function is_day() {
     var today = new Date();
     var time = today.getHours() + ":" + today.getMinutes();
-    var _cmd = ["hdate", "-s"];
-    var sunrise = cmd(_cmd).slice(47, 53); // sunrise
-    var sunset = cmd(_cmd).slice(61, 67); // sunset
+    var splits = cmd(["hdate", "-s"]).split(":");
+    // var sunrise = cmd(_cmd).slice(47, 53); // sunrise
+    // var sunset = cmd(_cmd).slice(61, 67); // sunset
+    var sunrise = (splits[1] + ":" + splits[2].split("\n")[0]).replace(
+        /\s/g,
+        ""
+    );
+    var sunset = (splits[3] + ":" + splits[4].split("\n")[0]).replace(
+        /\s/g,
+        ""
+    );
     if (sunrise < time && time < sunset) {
         return true;
     } else {
