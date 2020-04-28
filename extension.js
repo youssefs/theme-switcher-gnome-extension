@@ -1,16 +1,13 @@
 const GObject = imports.gi.GObject;
 const St = imports.gi.St;
-const Clutter = imports.gi.Clutter;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Main = imports.ui.main;
-const PanelMenu = imports.ui.panelMenu;
 
 const DarkIcon = "icons/dark-gray.svg";
 const LightIcon = "icons/light-gray.svg";
 
-// let button, icon, state;
 let button;
 
 const light_theme = [
@@ -18,14 +15,12 @@ const light_theme = [
     "set",
     "org.gnome.desktop.interface",
     "gtk-theme",
-    // "Adwaita-maia",
     "Yaru",
 ];
 const light_shell_theme = [
     "dconf",
     "write",
     "/org/gnome/shell/extensions/user-theme/name",
-    // "'Adwaita-maia'",
     "'Default'",
 ];
 const dark_theme = [
@@ -33,14 +28,12 @@ const dark_theme = [
     "set",
     "org.gnome.desktop.interface",
     "gtk-theme",
-    // "Adwaita-maia-dark",
     "Yaru-dark",
 ];
 const dark_shell_theme = [
     "dconf",
     "write",
     "/org/gnome/shell/extensions/user-theme/name",
-    // "'Adwaita-maia-dark'",
     "'Yaru-dark'",
 ];
 const current_theme = [
@@ -63,11 +56,9 @@ let ThemeSwitcher = GObject.registerClass(
             });
 
             if (this._isDay()) {
-                // this._setIcon(LightIcon);
                 this._setLight();
                 this.state = false;
             } else {
-                // this._setIcon(DarkIcon);
                 this._setDark();
                 this.state = true;
             }
@@ -85,13 +76,6 @@ let ThemeSwitcher = GObject.registerClass(
                 null
             )[1].toString();
             return stdout;
-        }
-
-        _setIcon(icon_file) {
-            this.icon = new St.Icon({ style_class: "system-status-icon" });
-            this.icon.gicon = Gio.icon_new_for_string(
-                Me.path + "/" + icon_file
-            );
         }
 
         _setDark() {
