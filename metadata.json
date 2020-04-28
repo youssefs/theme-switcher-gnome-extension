@@ -1,6 +1,6 @@
 {
-	"uuid": "theme-switcher@platypus.net",
-	"name": "Theme Switcher",
+	"uuid": "theme-switcherd@platypus.net",
+	"name": "Theme Switcher Dev",
 	"author": "Youssef Saade",
 	"description": "This extension adds a button to the status bar to toggle between Light and Dark GTK themes.",
 	"version": 0.1,
