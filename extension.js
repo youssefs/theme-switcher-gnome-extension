@@ -25,7 +25,7 @@ const light_shell_theme = [
     "dconf",
     "write",
     "/org/gnome/shell/extensions/user-theme/name",
-    "'Adwaita-maia'",
+    // "'Adwaita-maia'",
     "'Default'",
 ];
 const dark_theme = [
@@ -51,57 +51,32 @@ const current_theme = [
 ];
 
 let ThemeSwitcher = GObject.registerClass(
-    class ThemeSwitcher extends PanelMenu.Button {
-        constructor() {
-            super._init(0.0, "Theme Switcher");
+    class ThemeSwitcher extends St.Bin {
+        _init() {
+            super._init({
+                style_class: "panel-button",
+                reactive: true,
+                can_focus: true,
+                x_fill: true,
+                y_fill: false,
+                track_hover: true,
+            });
 
-            let box = new St.BoxLayout();
-            let icon = new St.Icon({ style_class: "system-status-icon" });
-            box.add(icon);
-            this.actor.add_child(box);
-
-            if (this.isDay()) {
-                // this.icon = new St.Icon({ style_class: "system-status-icon" });
-                // this.icon.gicon = Gio.icon_new_for_string(
-                //     Me.path + "/" + LightIcon
-                // );
-                this.setIcon(LightIcon);
-                this.setLight();
+            if (this._isDay()) {
+                // this._setIcon(LightIcon);
+                this._setLight();
                 this.state = false;
             } else {
-                // this.icon = new St.Icon({ style_class: "system-status-icon" });
-                // this.icon.gicon = Gio.icon_new_for_string(
-                //     Me.path + "/" + DarkIcon
-                // );
-                this.setIcon(DarkIcon);
-                this.setDark();
+                // this._setIcon(DarkIcon);
+                this._setDark();
                 this.state = true;
             }
-            container.add_actor(this.icon);
+            this.set_child(this.icon);
 
-            this.connect("button-press-event", function () {
-                if (this.toggleTheme()) {
-                    // this.icon = new St.Icon({
-                    //     style_class: "system-status-icon",
-                    // });
-                    // this.icon.gicon = Gio.icon_new_for_string(
-                    //     Me.path + "/" + DarkIcon
-                    // );
-                    this.setIcon(DarkIcon);
-                } else {
-                    // this.icon = new St.Icon({
-                    //     style_class: "system-status-icon",
-                    // });
-                    // this.icon.gicon = Gio.icon_new_for_string(
-                    //     Me.path + "/" + LightIcon
-                    // );
-                    this.setIcon(LightIcon);
-                }
-                this.set_child(this.icon);
-            });
+            this.connect("button-press-event", this._toggleTheme.bind(this));
         }
 
-        cmd(cmd) {
+        _cmd(cmd) {
             let stdout = GLib.spawn_sync(
                 null,
                 cmd,
@@ -112,38 +87,50 @@ let ThemeSwitcher = GObject.registerClass(
             return stdout;
         }
 
-        setIcon(icon_file) {
-            // this.icon = new St.Icon({ style_class: "system-status-icon" });
-            icon.gicon = Gio.icon_new_for_string(Me.path + "/" + icon_file);
+        _setIcon(icon_file) {
+            this.icon = new St.Icon({ style_class: "system-status-icon" });
+            this.icon.gicon = Gio.icon_new_for_string(
+                Me.path + "/" + icon_file
+            );
         }
 
-        setDark() {
-            this.cmd(dark_theme);
-            this.cmd(dark_shell_theme);
+        _setDark() {
+            this.icon = new St.Icon({ style_class: "system-status-icon" });
+            this.icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
+            this.set_child(this.icon);
+            this._cmd(dark_theme);
+            this._cmd(dark_shell_theme);
             this.state = true;
         }
 
-        setLight() {
-            this.cmd(light_theme);
-            this.cmd(light_shell_theme);
+        _setLight() {
+            this.icon = new St.Icon({ style_class: "system-status-icon" });
+            this.icon.gicon = Gio.icon_new_for_string(
+                Me.path + "/" + LightIcon
+            );
+            this.set_child(this.icon);
+            this._cmd(light_theme);
+            this._cmd(light_shell_theme);
             this.state = false;
         }
 
-        toggleTheme() {
-            let variant = this.cmd(current_theme);
+        _toggleTheme() {
+            let variant = this._cmd(current_theme);
             if (variant.includes("dark")) {
-                this.setLight();
+                this._setLight();
+                // this._setIcon(LightIcon);
                 return false;
             } else {
-                this.setDark();
+                this._setDark();
+                // this._setIcon(DarkIcon);
                 return true;
             }
         }
 
-        isDay() {
+        _isDay() {
             var today = new Date();
             var time = today.getHours() + ":" + today.getMinutes();
-            var splits = this.cmd(["hdate", "-s"]).split(":");
+            var splits = this._cmd(["hdate", "-s"]).split(":");
             // var sunrise = cmd(_cmd).slice(47, 53); // sunrise
             // var sunset = cmd(_cmd).slice(61, 67); // sunset
             var sunrise = (splits[1] + ":" + splits[2].split("\n")[0]).replace(
@@ -163,46 +150,13 @@ let ThemeSwitcher = GObject.registerClass(
     }
 );
 
-function init() {
-    // button = new St.Bin({
-    //     style_class: "panel-button",
-    //     reactive: true,
-    //     can_focus: true,
-    //     x_fill: true,
-    //     y_fill: false,
-    //     track_hover: true,
-    // });
-    // if (is_day()) {
-    //     icon = new St.Icon({ style_class: "system-status-icon" });
-    //     icon.gicon = Gio.icon_new_for_string(Me.path + "/" + LightIcon);
-    //     set_light();
-    //     state = false;
-    // } else {
-    //     icon = new St.Icon({ style_class: "system-status-icon" });
-    //     icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
-    //     set_dark();
-    //     state = true;
-    // }
-    // button.set_child(icon);
-    // button.connect("button-press-event", function () {
-    //     if (toggle_theme()) {
-    //         icon = new St.Icon({ style_class: "system-status-icon" });
-    //         icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
-    //     } else {
-    //         icon = new St.Icon({ style_class: "system-status-icon" });
-    //         icon.gicon = Gio.icon_new_for_string(Me.path + "/" + LightIcon);
-    //     }
-    //     button.set_child(icon);
-    // });
-}
+function init() {}
 
 function enable() {
     button = new ThemeSwitcher();
-    Main.panel.addToStatusArea("theme-switcher", button, 0, "right");
-    // Main.panel._rightBox.insert_child_at_index(button, 0);
+    Main.panel._rightBox.insert_child_at_index(button, 0);
 }
 
 function disable() {
-    // Main.panel._rightBox.remove_child(button);
-    button.destroy();
+    Main.panel._rightBox.remove_child(button);
 }
