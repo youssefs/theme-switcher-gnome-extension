@@ -97,42 +97,124 @@ function is_day() {
     }
 }
 
-function init() {
-    button = new St.Bin({
-        style_class: "panel-button",
-        reactive: true,
-        can_focus: true,
-        x_fill: true,
-        y_fill: false,
-        track_hover: true,
-    });
-
-    if (is_day()) {
-        icon = new St.Icon({ style_class: "system-status-icon" });
-        icon.gicon = Gio.icon_new_for_string(Me.path + "/" + LightIcon);
-        set_light();
-        state = false;
-    } else {
-        icon = new St.Icon({ style_class: "system-status-icon" });
-        icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
-        set_dark();
-        state = true;
-    }
-    button.set_child(icon);
-
-    button.connect("button-press-event", function () {
-        if (toggle_theme()) {
-            icon = new St.Icon({ style_class: "system-status-icon" });
-            icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
-        } else {
+class ThemeSwitcher extends St.Bin {
+    constructor() {
+        if (isDay()) {
             icon = new St.Icon({ style_class: "system-status-icon" });
             icon.gicon = Gio.icon_new_for_string(Me.path + "/" + LightIcon);
+            setLight();
+            state = false;
+        } else {
+            icon = new St.Icon({ style_class: "system-status-icon" });
+            icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
+            setDark();
+            state = true;
         }
-        button.set_child(icon);
-    });
+        this.set_child(icon);
+
+        this.connect("button-press-event", function () {
+            if (this.toggleTheme()) {
+                icon = new St.Icon({ style_class: "system-status-icon" });
+                icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
+            } else {
+                icon = new St.Icon({ style_class: "system-status-icon" });
+                icon.gicon = Gio.icon_new_for_string(Me.path + "/" + LightIcon);
+            }
+            this.set_child(icon);
+        });
+    }
+
+    cmd(cmd) {
+        let stdout = GLib.spawn_sync(
+            null,
+            cmd,
+            null,
+            GLib.SpawnFlags.SEARCH_PATH,
+            null
+        )[1].toString();
+        return stdout;
+    }
+
+    setDark() {
+        cmd(dark_theme);
+        cmd(dark_shell_theme);
+        state = true;
+    }
+
+    setLight() {
+        cmd(light_theme);
+        cmd(light_shell_theme);
+        state = false;
+    }
+
+    toggleTheme() {
+        let variant = cmd(current_theme);
+        if (variant.includes("dark")) {
+            set_light();
+            return false;
+        } else {
+            set_dark();
+            return true;
+        }
+    }
+
+    isDay() {
+        var today = new Date();
+        var time = today.getHours() + ":" + today.getMinutes();
+        var splits = cmd(["hdate", "-s"]).split(":");
+        // var sunrise = cmd(_cmd).slice(47, 53); // sunrise
+        // var sunset = cmd(_cmd).slice(61, 67); // sunset
+        var sunrise = (splits[1] + ":" + splits[2].split("\n")[0]).replace(
+            /\s/g,
+            ""
+        );
+        var sunset = (splits[3] + ":" + splits[4].split("\n")[0]).replace(
+            /\s/g,
+            ""
+        );
+        if (sunrise < time && time < sunset) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+function init() {
+    // button = new St.Bin({
+    //     style_class: "panel-button",
+    //     reactive: true,
+    //     can_focus: true,
+    //     x_fill: true,
+    //     y_fill: false,
+    //     track_hover: true,
+    // });
+    // if (is_day()) {
+    //     icon = new St.Icon({ style_class: "system-status-icon" });
+    //     icon.gicon = Gio.icon_new_for_string(Me.path + "/" + LightIcon);
+    //     set_light();
+    //     state = false;
+    // } else {
+    //     icon = new St.Icon({ style_class: "system-status-icon" });
+    //     icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
+    //     set_dark();
+    //     state = true;
+    // }
+    // button.set_child(icon);
+    // button.connect("button-press-event", function () {
+    //     if (toggle_theme()) {
+    //         icon = new St.Icon({ style_class: "system-status-icon" });
+    //         icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
+    //     } else {
+    //         icon = new St.Icon({ style_class: "system-status-icon" });
+    //         icon.gicon = Gio.icon_new_for_string(Me.path + "/" + LightIcon);
+    //     }
+    //     button.set_child(icon);
+    // });
 }
 
 function enable() {
+    button = new ThemeSwitcher();
     Main.panel._rightBox.insert_child_at_index(button, 0);
 }
 
