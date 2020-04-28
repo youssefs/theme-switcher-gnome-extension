@@ -101,6 +101,6 @@ In a terminal:
     ```
 
 ## Limitations
-Currently this version only switches between two static variants (light and dark) of one theme: `Adwaita-maia`.
+Currently this version only switches between two static variants (light and dark) of one theme: `Yaru` the standard Ubuntu (20.04) theme.
 In future versions, I will be adding the option to choose the base theme.
 
