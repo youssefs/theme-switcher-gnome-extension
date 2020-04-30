@@ -124,11 +124,9 @@ let ThemeSwitcher = GObject.registerClass(
             var m = t.get_minute().toString();
             if (h.length != 2) {
                 h = "0" + h;
-                log(h);
             }
             if (m.length != 2) {
                 m = "0" + m;
-                log(m);
             }
             return h + ":" + m;
         }
