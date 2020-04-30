@@ -102,29 +102,48 @@ let ThemeSwitcher = GObject.registerClass(
             let variant = this._cmd(current_theme);
             if (variant.includes("dark")) {
                 this._setLight();
-                // this._setIcon(LightIcon);
                 return false;
             } else {
                 this._setDark();
-                // this._setIcon(DarkIcon);
                 return true;
             }
         }
 
+        _addDST(time_str) {
+            var t = GLib.DateTime.new(
+                GLib.TimeZone.new_local(),
+                1970,
+                1,
+                1,
+                Number(time_str.split(":")[0]),
+                Number(time_str.split(":")[1]),
+                0
+            );
+            t = t.add_hours(1);
+            var h = t.get_hour().toString();
+            var m = t.get_minute().toString();
+            if (h.length != 2) {
+                h = "0" + h;
+                log(h);
+            }
+            if (m.length != 2) {
+                m = "0" + m;
+                log(m);
+            }
+            return h + ":" + m;
+        }
+
         _isDay() {
             var today = new Date();
+            var dt = new GLib.DateTime();
             var time = today.getHours() + ":" + today.getMinutes();
-            var splits = this._cmd(["hdate", "-s"]).split(":");
-            // var sunrise = cmd(_cmd).slice(47, 53); // sunrise
-            // var sunset = cmd(_cmd).slice(61, 67); // sunset
-            var sunrise = (splits[1] + ":" + splits[2].split("\n")[0]).replace(
-                /\s/g,
-                ""
-            );
-            var sunset = (splits[3] + ":" + splits[4].split("\n")[0]).replace(
-                /\s/g,
-                ""
-            );
+            var splits = this._cmd(["hdate", "-s", "-T"]).split("\n");
+            var sunrise = splits[2].split(",")[2];
+            var sunset = splits[2].split(",")[3];
+            if (dt.is_daylight_savings()) {
+                sunrise = this._addDST(sunrise);
+                sunset = this._addDST(sunset);
+            }
             if (sunrise < time && time < sunset) {
                 return true;
             } else {
