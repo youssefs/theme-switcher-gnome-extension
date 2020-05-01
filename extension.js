@@ -58,8 +58,7 @@ let ThemeSwitcher = GObject.registerClass(
                 track_hover: true,
             });
 
-            this._settings = Convenience.getSettings();
-            this._themeSettings = Gio.Settings({
+            this._themeSettings = new Gio.Settings({
                 schema: config.THEME_GSETTINGS_SCHEMA,
             });
 

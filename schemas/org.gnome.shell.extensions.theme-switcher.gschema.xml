@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extensions-theme-switcher">
+    <schema path="/org/gnome/shell/extensions/theme-switcher/" id="org.gnome.shell.extensions.theme-switcher">
+        <key type="s" name="base-theme">
+            <default>"Yaru"</default>
+            <summary>The used base theme</summary>
+            <description></description>
+        </key>
+        <key type="s" name="state">
+            <default>"ligth"</default>
+            <summary>Store the current state of the switcher</summary>
+            <description>Possible values are light and dark</description>
+        </key>
+        <key type="b" name="auto-nightlight">
+            <default>true</default>
+            <summary>States if auto night light detection is enabled or not</summary>
+            <description>If enabled the theme switcher will switch to dark variant after sunset and will switch back to light after sunrise.</description>
+        </key>
+    </schema>
+</schemalist>
