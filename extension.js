@@ -4,6 +4,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Main = imports.ui.main;
+const Lang = imports.lang;
 const Convenience = Me.imports.convenience;
 const PrefKeys = Me.imports.pref_keys;
 const config = Me.imports.config;
@@ -98,23 +99,19 @@ let ThemeSwitcher = GObject.registerClass(
         }
 
         _setDark() {
-            if (this._state == "light") {
-                this._state = "dark";
-                this._settings.set_string(PrefKeys.STATE, this._state);
-                this._setIcon();
-                this.currentTheme = this._base_theme + "-dark";
-                this._cmd(dark_shell_theme);
-            }
+            this._state = "dark";
+            this._settings.set_string(PrefKeys.STATE, this._state);
+            this._setIcon();
+            this.currentTheme = this._base_theme + "-dark";
+            this._cmd(dark_shell_theme);
         }
 
         _setLight() {
-            if (this._state == "dark") {
-                this._state = "light";
-                this._settings.set_string(PrefKeys.STATE, this._state);
-                this._setIcon();
-                this.currentTheme = this._base_theme;
-                this._cmd(light_shell_theme);
-            }
+            this._state = "light";
+            this._settings.set_string(PrefKeys.STATE, this._state);
+            this._setIcon();
+            this.currentTheme = this._base_theme;
+            this._cmd(light_shell_theme);
         }
 
         _toggleTheme() {
@@ -215,24 +212,32 @@ let ThemeSwitcher = GObject.registerClass(
         _bindSettings() {
             this._settings.connect(
                 "changed::" + PrefKeys.AUTO_NIGHTLIGHT,
-                () => {
-                    this._auto_nightlight = this._settings.get_boolean(
-                        PrefKeys.AUTO_NIGHTLIGHT
-                    );
+                Lang.bind(this, function (settings, key) {
+                    this._auto_nightlight = settings.get_boolean(key);
                     if (this._auto_nightlight) {
                         this._toggleOnNightLight();
                         this._asyncNightlightDetecter();
                     }
-                }
+                })
             );
-            this._settings.connect("changed::" + PrefKeys.BASE_THEME, () => {
-                this._base_theme = this._settings.get_string(
-                    PrefKeys.BASE_THEME
-                );
-            });
-            this._settings.connect("changed::" + PrefKeys.STATE, () => {
-                this._state = this._settings.get_string(PrefKeys.STATE);
-            });
+            this._settings.connect(
+                "changed::" + PrefKeys.BASE_THEME,
+                Lang.bind(this, function (settings, key) {
+                    this._base_theme = settings.get_string(key);
+                    if (this._state == "light") {
+                        this._setLight();
+                    } else {
+                        this._setDark();
+                    }
+                })
+            );
+
+            this._settings.connect(
+                "changed::" + PrefKeys.STATE,
+                Lang.bind(this, function (settings, key) {
+                    this._state = settings.get_string(key);
+                })
+            );
         }
     }
 );
