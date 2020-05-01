@@ -172,4 +172,5 @@ function enable() {
 
 function disable() {
     Main.panel._rightBox.remove_child(button);
+    button.destroy();
 }
