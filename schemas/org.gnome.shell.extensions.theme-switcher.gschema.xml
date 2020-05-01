@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schemalist gettext-domain="gnome-shell-extensions-theme-switcher">
+<!DOCTYPE schemalist SYSTEM "/usr/share/glib-2.0/schemas/gschema.dtd">
+<schemalist gettext-domain="theme-switcher">
     <schema path="/org/gnome/shell/extensions/theme-switcher/" id="org.gnome.shell.extensions.theme-switcher">
         <key type="s" name="base-theme">
             <default>"Yaru"</default>
             <summary>The used base theme</summary>
             <description></description>
         </key>
-        <key type="s" name="state">
-            <default>"ligth"</default>
+        <key type="s" name="current-state">
+            <default>"light"</default>
             <summary>Store the current state of the switcher</summary>
             <description>Possible values are light and dark</description>
         </key>
