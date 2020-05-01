@@ -1,5 +1,5 @@
 # Theme Switcher
-A Gnome extension to toggle between Light and Dark themes.
+A Gnome extension to toggle between Light and Dark themes. It automatically detects Day/Night and sets the corresponding Light/Dark theme variants of the base theme. Automatic detection can be inhibited through a click on the icon in the panel, which switches to the other variant and inhibts the auto Day/Night detection. 
 
 Light: 
 
@@ -11,12 +11,11 @@ Dark:
 
 ## Requirements
 This extensions has three requirements:
-- `gsettings` : for changing GTK theme.
+- `hdate` : for Day/Night detection on login.
 - [User Themes Gnome Extension](https://extensions.gnome.org/extension/19/user-themes/) (Shell Theme)
 - `dconf` : for changing shell theme.
-- `hdate` : for Day/Night detection on login.
 
-`gsettings` comes with the gnome-shell installation. If you don't have the `dconf` insalled on your system you can install it using your default package manage:
+If you don't have the `dconf` insalled on your system you can install it using your default package manage:
 - Ubuntu/Debian
     ```bash
     $ sudo apt install dconf
@@ -78,13 +77,13 @@ In a terminal:
 1. Clone the git directory:
 
     ```bash
-    $ git clone https://github.com/youssefs/theme-switcher
+    $ git clone https://github.com/youssefs/theme-switcher-gnome-extension
     ```
 
 2. Go to the cloned directory:
 
     ```bash
-    $ cd theme-switcher
+    $ cd theme-switcher-gnome-extension
     ```
 
 3. Run the `install.sh` file:
@@ -97,7 +96,7 @@ In a terminal:
 
     ```bash
     $ cd ..
-    $ rm -r theme-switcher
+    $ rm -r theme-switcher-gnome-extension
     ```
 
 ## Limitations
