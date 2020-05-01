@@ -19,11 +19,12 @@ ext='./extension.js'
 prefkeys='./pref_keys.js'
 config='./config.js'
 conv='./convenience.js'
+timers='./timers.js'
 
-if [[ -d $icons && -d $schemas && -e $ext && -e $prefkeys && -e $config && -e $conv ]]
+if [[ -d $icons && -d $schemas && -e $ext && -e $prefkeys && -e $config && -e $conv && -e $timers ]]
 then
     cp -r $icons $schemas $metadata $ext -t $target_dir
-    cp -r $conv $config $prefkeys -t $target_dir
+    cp -r $conv $config $prefkeys $timers -t $target_dir
     echo Copying files to $target_dir
 else
     echo Files not found

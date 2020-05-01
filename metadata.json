@@ -4,7 +4,7 @@
 	"settings-schema": "org.gnome.shell.extensions.theme-switcher",
 	"author": "Youssef Saade",
 	"description": "This extension adds a button to the status bar to toggle between Light and Dark GTK themes.",
-	"version": 0.2,
+	"version": 0.3,
 	"shell-version": [
 		"3.36"
 	],
