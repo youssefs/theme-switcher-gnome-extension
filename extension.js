@@ -53,6 +53,7 @@ let ThemeSwitcher = GObject.registerClass(
                 this._asyncNightlightDetecter();
             }
             this._setIcon();
+
             this.connect("button-press-event", this._toggleTheme.bind(this));
         }
 
@@ -120,16 +121,13 @@ let ThemeSwitcher = GObject.registerClass(
             Timers.clearInterval(this._timerID);
             this._auto_nightlight = false;
             this._settings.set_boolean(
-                config.AUTO_NIGHTLIGHT,
+                PrefKeys.AUTO_NIGHTLIGHT,
                 this._auto_nightlight
             );
-            Main.notify("ALERT!", "Auto Night Light Detection Turned Off!");
             if (this._state == "dark") {
                 this._setLight();
-                // return false;
             } else {
                 this._setDark();
-                // return true;
             }
         }
 
@@ -248,5 +246,5 @@ function enable() {
 
 function disable() {
     Main.panel._rightBox.remove_child(button);
-    button.destroy();
+    // button.destroy();
 }
