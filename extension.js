@@ -4,6 +4,8 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Main = imports.ui.main;
+const Convenience = Me.imports.convenience;
+const config = Me.imports.config;
 
 const DarkIcon = "icons/dark-gray.svg";
 const LightIcon = "icons/light-gray.svg";
@@ -55,6 +57,10 @@ let ThemeSwitcher = GObject.registerClass(
                 track_hover: true,
             });
 
+            this._themeSettings = new Gio.Settings({
+                schema: config.THEME_GSETTINGS_SCHEMA,
+            });
+
             if (this._isDay()) {
                 this._setLight();
                 this.state = false;
@@ -82,7 +88,10 @@ let ThemeSwitcher = GObject.registerClass(
             this.icon = new St.Icon({ style_class: "system-status-icon" });
             this.icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
             this.set_child(this.icon);
-            this._cmd(dark_theme);
+            this._themeSettings.set_string(
+                config.THEME_GSETTINGS_PROPERTY,
+                "Yaru-dark"
+            );
             this._cmd(dark_shell_theme);
             this.state = true;
         }
@@ -93,7 +102,10 @@ let ThemeSwitcher = GObject.registerClass(
                 Me.path + "/" + LightIcon
             );
             this.set_child(this.icon);
-            this._cmd(light_theme);
+            this._themeSettings.set_string(
+                config.THEME_GSETTINGS_PROPERTY,
+                "Yaru"
+            );
             this._cmd(light_shell_theme);
             this.state = false;
         }
