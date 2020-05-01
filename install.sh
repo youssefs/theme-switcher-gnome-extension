@@ -20,10 +20,10 @@ prefkeys='./pref_keys.js'
 config='./config.js'
 conv='./convenience.js'
 
-if [[ -d $icons && -d $schemas && -e $ext && ]]
+if [[ -d $icons && -d $schemas && -e $ext && -e $prefkeys && -e $config && -e $conv ]]
 then
     cp -r $icons $schemas $metadata $ext -t $target_dir
-    cp -r $convenience $config $prefkeys -t $target_dir
+    cp -r $conv $config $prefkeys -t $target_dir
     echo Copying files to $target_dir
 else
     echo Files not found
