@@ -14,11 +14,16 @@ echo Creating $target_dir
 mkdir -p $target_dir
 
 icons='./icons/'
+schemas='./schemas/'
 ext='./extension.js'
+prefkeys='./pref_keys.js'
+config='./config.js'
+conv='./convenience.js'
 
-if [[ -d $icons && -e $ext ]]
+if [[ -d $icons && -d $schemas && -e $ext && ]]
 then
-    cp -r icons/ metadata.json extension.js -t $target_dir
+    cp -r $icons $schemas $metadata $ext -t $target_dir
+    cp -r $convenience $config $prefkeys -t $target_dir
     echo Copying files to $target_dir
 else
     echo Files not found
