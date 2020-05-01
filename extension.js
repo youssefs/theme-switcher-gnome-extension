@@ -4,6 +4,9 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Main = imports.ui.main;
+const Convenience = Me.imports.convenience;
+const PrefKeys = Me.imports.pref_keys;
+const config = Me.imports.config;
 
 const DarkIcon = "icons/dark-gray.svg";
 const LightIcon = "icons/light-gray.svg";
@@ -55,16 +58,34 @@ let ThemeSwitcher = GObject.registerClass(
                 track_hover: true,
             });
 
+            this._settings = Convenience.getSettings();
+            this._themeSettings = Gio.Settings({
+                schema: config.THEME_GSETTINGS_SCHEMA,
+            });
+
             if (this._isDay()) {
                 this._setLight();
-                this.state = false;
             } else {
                 this._setDark();
-                this.state = true;
             }
             this.set_child(this.icon);
 
             this.connect("button-press-event", this._toggleTheme.bind(this));
+        }
+
+        get currentTheme() {
+            return this._themeSettings
+                .get_string(config.THEME_GSETTINGS_PROPERTY)
+                .split("-")[0];
+        }
+
+        set currentTheme(themeVar) {
+            if (themeVar != this.currentTheme) {
+                this._themeSettings.set_string(
+                    config.THEME_GSETTINGS_PROPERTY,
+                    themeVar
+                );
+            }
         }
 
         _cmd(cmd) {
@@ -82,9 +103,13 @@ let ThemeSwitcher = GObject.registerClass(
             this.icon = new St.Icon({ style_class: "system-status-icon" });
             this.icon.gicon = Gio.icon_new_for_string(Me.path + "/" + DarkIcon);
             this.set_child(this.icon);
+            this._themeSettings.set_string(
+                config.THEME_GSETTINGS_PROPERTY,
+                PrefKeys.BASE_THEME + "-dark"
+            );
             this._cmd(dark_theme);
             this._cmd(dark_shell_theme);
-            this.state = true;
+            this._state = "dark";
         }
 
         _setLight() {
@@ -93,12 +118,18 @@ let ThemeSwitcher = GObject.registerClass(
                 Me.path + "/" + LightIcon
             );
             this.set_child(this.icon);
+            this._themeSettings.set_string(
+                config.THEME_GSETTINGS_PROPERTY,
+                PrefKeys.BASE_THEME
+            );
             this._cmd(light_theme);
             this._cmd(light_shell_theme);
-            this.state = false;
+            this._state = "light";
+            this._settings.set_boolean(PrefKeys.STATE, this._state);
         }
 
         _toggleTheme() {
+            Timers.clear_interval(this._timerID);
             let variant = this._cmd(current_theme);
             if (variant.includes("dark")) {
                 this._setLight();
@@ -124,11 +155,9 @@ let ThemeSwitcher = GObject.registerClass(
             var m = t.get_minute().toString();
             if (h.length != 2) {
                 h = "0" + h;
-                log(h);
             }
             if (m.length != 2) {
                 m = "0" + m;
-                log(m);
             }
             return h + ":" + m;
         }
@@ -149,6 +178,62 @@ let ThemeSwitcher = GObject.registerClass(
             } else {
                 return false;
             }
+        }
+
+        _toggleOnNightLight() {
+            if (!this._isDay()) {
+                if (this._state == "light") {
+                    this._setDark();
+                    return;
+                }
+            } else {
+                if (this._state == "dark") {
+                    this._setLight();
+                    return;
+                }
+            }
+        }
+
+        _setNightlightTimer() {
+            return new Promise((resolve) => {
+                this._timerID = Timers.setInterval(
+                    _toggleOnNightLight(),
+                    900000 // 15 minutes
+                );
+            });
+        }
+
+        async _asyncNightlightDetecter() {
+            const result = await this._setNightlightTimer();
+        }
+
+        _loadSettings() {
+            this._state = this._settings.get_string(PrefKeys.STATE);
+            this._base_theme = this._settings.get_string(PrefKeys.BASE_THEME);
+            this._auto_nightlight = this.get_boolean(PrefKeys.AUTO_NIGHTLIGHT);
+        }
+
+        _bindSettings() {
+            this._settings.connect(
+                "changed::" + PrefKeys.AUTO_NIGHTLIGHT,
+                () => {
+                    this._auto_nightlight = this._settings.get_boolean(
+                        PrefKeys.AUTO_NIGHTLIGHT
+                    );
+                    if (this._auto_nightlight) {
+                        this._toggleOnNightLight();
+                        this._asyncNightlightDetecter();
+                    }
+                }
+            );
+            this._settings.connect("changed::" + PrefKeys.BASE_THEME, () => {
+                this._base_theme = this._settings.get_string(
+                    PrefKeys.BASE_THEME
+                );
+            });
+            this._settings.connect("changed::" + PrefKeys.STATE, () => {
+                this._state = this._settings.get_string(PrefKeys._state);
+            });
         }
     }
 );
